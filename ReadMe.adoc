@@ -12,8 +12,6 @@ This system uses an Arduino Mega with ultrasonic sensors in order to detect obst
 
 1. Download all files
 
-2. Assemble the header files into their
-
 == Step 2: Assemble the circuit
 
 Assemble the circuit following the diagram layout.png attached to the sketch
