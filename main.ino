@@ -1,3 +1,6 @@
+// This attempts the BWOD function to minimize delay
+// https://www.arduino.cc/en/Tutorial/BuiltInExamples/BlinkWithoutDelay
+
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
