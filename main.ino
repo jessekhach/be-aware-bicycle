@@ -4,15 +4,24 @@
 #include <Adafruit_SSD1306.h>
 #include <FastLED.h>
 
+// Defining where each pin is connected for ultrasonic sensors
 const int triggerPin = 2;
 const int echoPin = 3;
 const int triggerPin2 = 4;
 const int echoPin2 = 5;
 const int triggerPin3 = 6;
 const int echoPin3 = 7;
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-#define LED_PIN     8
+const int triggerPin4 = 8;
+const int echoPin4 = 9;
+const int triggerPin5 = 10;
+const int echoPin5 = 11;
+
+// OLED Declaration screen size in pixels
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+
+// Defining the LED strip parameters
+#define LED_PIN     12
 #define NUM_LEDS    60
 CRGB leds[NUM_LEDS];
 
@@ -27,10 +36,16 @@ void setup() {
   pinMode(triggerPin2, OUTPUT);  // Make the triggerPin an OUTPUT
   pinMode(echoPin3,INPUT_PULLUP);  // Someone said this also helped with errant readings...
   pinMode(triggerPin3, OUTPUT);  // Make the triggerPin an OUTPUT
-  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+  pinMode(echoPin4,INPUT_PULLUP);  // Someone said this also helped with errant readings...
+  pinMode(triggerPin4, OUTPUT);  // Make the triggerPin an OUTPUT
+  pinMode(echoPin5,INPUT_PULLUP);  // Someone said this also helped with errant readings...
+  pinMode(triggerPin5, OUTPUT);  // Make the triggerPin an OUTPUT
   digitalWrite(triggerPin, LOW);
   digitalWrite(triggerPin2, LOW);
   digitalWrite(triggerPin3, LOW);
+  digitalWrite(triggerPin4, LOW);
+  digitalWrite(triggerPin5, LOW);
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS); // Sets up the LED strip
   display.display();
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
     Serial.println(F("SSD1306 allocation failed"));
@@ -55,7 +70,6 @@ void loop()
   printToSerial(1, dist1);
   printToSerial(2, dist2);
   printToSerial(3, dist3);
-  delay(200);
   printToDisplay(1, dist1);
   printToDisplay(2, dist2);
   printToDisplay(3, dist3);
