@@ -1,3 +1,6 @@
+// This attempts the BWOD function to minimize delay
+// https://www.arduino.cc/en/Tutorial/BuiltInExamples/BlinkWithoutDelay
+
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -28,7 +31,12 @@ CRGB leds[NUM_LEDS];
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-void setup() {
+unsigned long startMillis;
+unsigned long currentMillis;
+const unsigned long period = 1000;  //the value is a number of milliseconds, ie 1 second
+
+void setup() 
+{
   Serial.begin(9600);           // For outputting distance data
   pinMode(echoPin,INPUT_PULLUP);  // Someone said this also helped with errant readings...
   pinMode(triggerPin, OUTPUT);  // Make the triggerPin an OUTPUT
@@ -47,7 +55,8 @@ void setup() {
   digitalWrite(triggerPin5, LOW);
   FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS); // Sets up the LED strip
   display.display();
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) // Address 0x3D for 128x64
+  { 
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
   }
@@ -57,10 +66,17 @@ void setup() {
   display.setTextColor(WHITE);
   display.setCursor(0, 0);
   display.display();
+  startMillis = millis();  //initial start time millis checks how long the program has been running
 }
 
 void loop()
 {
+  currentMillis = millis();
+  if (currentMillis - startMillis >= period)  //test whether the period has elapsed
+  {
+    digitalWrite(ledPin, !digitalRead(ledPin));  //if so, change the state of the LED.  Uses a neat trick to change the state
+    startMillis = currentMillis;  //IMPORTANT to save the start time of the current LED state.
+  }
   int dist1 = 0;
   int dist2 = 0;
   int dist3 = 0;
@@ -107,7 +123,8 @@ int getDistance(int trigger, int echo)
 
   // only grab values under 20ft/610cm (for some reason, 676 is a common return error for ∞ distance)
 
-  while ( (distance == 0) || (distance > 610) ) {
+  while ( (distance == 0) || (distance > 610) ) 
+  {
 
     // Trigger the sensor by setting the triggerPin high for 10 microseconds:
 
@@ -126,7 +143,8 @@ int getDistance(int trigger, int echo)
     // Catch funky ∞ distance readings
 
     watchloop++;        
-    if (watchloop > 20){      // If errant "676" readings 20 times
+    if (watchloop > 20) // If errant "676" readings 20 times
+    {
       distance = 610;         // set distance to 610cm (20ft) 
       break;                  // and break out of loop (not really needed if forced to 610)
     }
@@ -135,16 +153,29 @@ int getDistance(int trigger, int echo)
   return (distance);
 }
 
-void makeLEDs()
+void whiteLED()
 {
-  for (int i = 0; i <= 20; i++) {
+  for (int i = 0; i <= 20; i++) 
+  {
     leds[i] = CRGB ( 255, 255, 255);
     FastLED.show();
-    delay(5);
   }
-  for (int i = 20; i >= 0; i--) {
-    leds[i] = CRGB ( 255, 0, 0);
-    FastLED.show();
-    delay(5);
-  }
+}
+  
+ void redLED()
+ {
+   for (int i = 0l i <= 20l i++)
+   {
+     leds[i] = CRGB (255, 0, 0);
+     FastLED.show();
+   }
+ }
+  
+ void disableLEDs()
+ {
+   for (int i = 0; i <= 20; i++) 
+   {
+     leds[i] = CRGB ( 0, 0, 0);
+     FastLED.show();
+   }
 }
