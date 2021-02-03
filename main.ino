@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <FastLED.h>
 
 const int triggerPin = 2;
 const int echoPin = 3;
@@ -11,6 +12,9 @@ const int triggerPin3 = 6;
 const int echoPin3 = 7;
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
+#define LED_PIN     8
+#define NUM_LEDS    60
+CRGB leds[NUM_LEDS];
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
@@ -23,6 +27,7 @@ void setup() {
   pinMode(triggerPin2, OUTPUT);  // Make the triggerPin an OUTPUT
   pinMode(echoPin3,INPUT_PULLUP);  // Someone said this also helped with errant readings...
   pinMode(triggerPin3, OUTPUT);  // Make the triggerPin an OUTPUT
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
   digitalWrite(triggerPin, LOW);
   digitalWrite(triggerPin2, LOW);
   digitalWrite(triggerPin3, LOW);
@@ -57,6 +62,7 @@ void loop()
   display.display();
   display.clearDisplay();
   display.setCursor(0,0);
+  makeLEDs();
 }
 
 void printToSerial(int index, int distance)
@@ -113,4 +119,18 @@ int getDistance(int trigger, int echo)
   }
 
   return (distance);
+}
+
+void makeLEDs()
+{
+  for (int i = 0; i <= 20; i++) {
+    leds[i] = CRGB ( 255, 255, 255);
+    FastLED.show();
+    delay(5);
+  }
+  for (int i = 20; i >= 0; i--) {
+    leds[i] = CRGB ( 255, 0, 0);
+    FastLED.show();
+    delay(5);
+  }
 }
