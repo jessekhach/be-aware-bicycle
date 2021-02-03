@@ -33,7 +33,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 unsigned long startMillis;
 unsigned long currentMillis;
-const unsigned long period = 1000;  //the value is a number of milliseconds, ie 1 second
+const unsigned long flashingPeriod = 200;  //the value is a number of milliseconds
 
 void setup() 
 {
@@ -72,11 +72,18 @@ void setup()
 void loop()
 {
   currentMillis = millis();
-  if (currentMillis - startMillis >= period)  //test whether the period has elapsed
+  
+  if (currentMillis - startMillis >= 200)  //test whether the period has elapsed
   {
-    digitalWrite(ledPin, !digitalRead(ledPin));  //if so, change the state of the LED.  Uses a neat trick to change the state
-    startMillis = currentMillis;  //IMPORTANT to save the start time of the current LED state.
+    if (currentMillis - startMillis >= 400)
+    {
+      redLED();
+      break;
+    }
+    whiteLED();
   }
+  startMillis = currentMillis;
+  
   int dist1 = 0;
   int dist2 = 0;
   int dist3 = 0;
