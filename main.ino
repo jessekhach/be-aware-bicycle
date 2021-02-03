@@ -46,6 +46,7 @@ void setup() {
   digitalWrite(triggerPin4, LOW);
   digitalWrite(triggerPin5, LOW);
   FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS); // Sets up the LED strip
+  FastLED.setBrightness(10 );
   display.display();
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
     Serial.println(F("SSD1306 allocation failed"));
@@ -140,11 +141,13 @@ void makeLEDs()
   for (int i = 0; i <= 20; i++) {
     leds[i] = CRGB ( 255, 255, 255);
     FastLED.show();
-    delay(5);
+
   }
+  delay(20);
   for (int i = 20; i >= 0; i--) {
     leds[i] = CRGB ( 255, 0, 0);
     FastLED.show();
-    delay(5);
+
   }
+  delay(20);
 }
