@@ -21,17 +21,17 @@ const int leftHandlebar = 13;
 const int rightHandlebar = 14;
 const int seat = 15;
 
-// OLED Declaration screen size in pixels
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
+// // OLED Declaration screen size in pixels
+// #define SCREEN_WIDTH 128
+// #define SCREEN_HEIGHT 64
 
 // Defining the LED strip parameters
 #define LED_PIN     12
 #define NUM_LEDS    60
 CRGB leds[NUM_LEDS];
 
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+// // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+// Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 void setup() {
   Serial.begin(9600);           // For outputting distance data
@@ -52,17 +52,17 @@ void setup() {
   digitalWrite(frontTrigger, LOW);
   FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS); // Sets up the LED strip
   FastLED.setBrightness(10 );
-  display.display();
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;);
-  }
+  // display.display();
+  // if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
+  //   Serial.println(F("SSD1306 allocation failed"));
+  //   for(;;);
+  // }
   delay(2000);
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor(0, 0);
-  display.display();
+  // display.clearDisplay();
+  // display.setTextSize(2);
+  // display.setTextColor(WHITE);
+  // display.setCursor(0, 0);
+  // display.display();
 }
 
 void loop()
@@ -77,75 +77,37 @@ void loop()
   frontRightDist = getDistance(frontRightTrigger, frontRightEcho);
   backRightDist = getDistance(backRightTrigger, backRightEcho);
   frontDist = getDistance(frontTrigger, frontEcho);
-  Serial.print(frontLeftDist);
-  Serial.print(backLeftDist);
-  Serial.print(frontRightDist);
-  Serial.print(backLeftDist);
-  Serial.print(frontRightDist);
-  printToDisplay("Back left: ", backRightDist);
-  printToDisplay("Front: ", frontDist);
-  display.display();
-  display.clearDisplay();
-  display.setCursor(0,0);
+  // Serial.print(frontLeftDist);
+  // Serial.print(backLeftDist);
+  // Serial.print(frontRightDist);
+  // Serial.print(backLeftDist);
+  // Serial.print(frontRightDist);
+  // printToDisplay("Back left: ", backRightDist);
+  // printToDisplay("Front: ", frontDist);
+  // display.display();
+  // display.clearDisplay();
+  // display.setCursor(0,0);
   copycat();
 
-  if (frontLeftDist < 25 || frontRightDist < 25 || backLeftDist < 25 || backRightDist < 25 || frontDist < 25)
-  {
-    startLEDs();
-  }
-
-  else
-  {
-    stopLEDs();
-  }
+  checkLEDs();
   
-  if (frontLeftDist < 25) 
-  {
-    Serial.print("Starting left handlebar vibration\n");
-    startVibrate(leftHandlebar);
-  }
+  checkFront();
 
-  else
-  {
-    stopVibrate(leftHandlebar);
-  }
+  checkBack();
 
-  if (frontRightDist < 25)
-  {
-    Serial.print("Starting right handlebar vibration\n");
-    startVibrate(rightHandlebar);
-  }
+// void printToSerial(int index, int distance)
+// {
+//   char format[16];
+//   sprintf(format, "Distance %i: %i \n", index, distance);
+//   Serial.print(format);
+// }
 
-  else
-  {
-    stopVibrate(rightHandlebar);
-  }
-
-  if (backLeftDist < 25 || backRightDist < 25)
-  {
-    Serial.print("Starting seat vibration\n");
-    startVibrate(seat);
-  }
-
-  else
-  {
-    stopVibrate(seat);
-  }
-}
-
-void printToSerial(int index, int distance)
-{
-  char format[16];
-  sprintf(format, "Distance %i: %i \n", index, distance);
-  Serial.print(format);
-}
-
-void printToDisplay(int index, int distance)
-{
-  char format[16];
-  sprintf(format, "Distance %i: %i cm", index, distance);
-  display.println(format);
-}
+// void printToDisplay(int index, int distance)
+// {
+//   char format[16];
+//   sprintf(format, "Distance %i: %i cm", index, distance);
+//   display.println(format);
+// }
 
 int getDistance(int trigger, int echo) 
 {
@@ -240,3 +202,57 @@ void stopVibrate(int vibrationPin)
   digitalWrite(vibrationPin, LOW);
 }
 
+void checkLEDs()
+{
+  if (frontLeftDist < 25 || frontRightDist < 25 || backLeftDist < 25 || backRightDist < 25 || frontDist < 25)
+  {
+    startLEDs();
+  }
+
+  else
+  {
+    stopLEDs();
+  }
+}
+
+void checkFront()
+{
+  if (frontLeftDist < 25 && frontRightDist < 25) 
+  {
+    Serial.print("Starting full handlebar vibration\n");
+    startVibrate(leftHandlebar);
+    startVibrate(rightHandlebar);
+  }
+
+  else if (frontLeftDist < 25)
+  {
+    stopVibrate(rightHandlebar);
+    startVibrate(leftHandlebar);
+  }
+
+  else if (frontRightDist < 25)
+  {
+    stopVibrate(leftHandlebar);
+    startVibrate(rightHandlebar);
+  }
+
+  else
+  {
+    stopVibrate(leftHandlebar);
+    stopVibrate(rightHandlebar);
+  }
+}
+
+void checkBack()
+{
+  if (backLeftDist < 25 || backRightDist < 25)
+  {
+    Serial.print("Starting seat vibration\n");
+    startVibrate(seat);
+  }
+
+  else
+  {
+    stopVibrate(seat);
+  }
+}
