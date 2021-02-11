@@ -5,19 +5,21 @@
 #include <FastLED.h>
 
 // Defining where each pin is connected for ultrasonic sensors
-const int triggerPin = 2;
-const int echoPin = 3;
-const int triggerPin2 = 4;
-const int echoPin2 = 5;
-const int triggerPin3 = 6;
-const int echoPin3 = 7;
-const int triggerPin4 = 8;
-const int echoPin4 = 9;
-const int triggerPin5 = 10;
-const int echoPin5 = 11;
+const int frontLeftTrigger = 2;
+const int frontLeftEcho = 3;
+const int backLeftTrigger = 4;
+const int backLeftEcho = 5;
+const int frontRightTrigger = 6;
+const int frontRightEcho = 7;
+const int backRightTrigger = 8;
+const int backRightEcho = 9;
+const int frontTrigger = 10;
+const int frontEcho = 11;
 
 // Defining transistor pins to toggle vibrations
-const int transPin1 = 13;
+const int leftHandlebar = 13;
+const int rightHandlebar = 14;
+const int seat = 15;
 
 // OLED Declaration screen size in pixels
 #define SCREEN_WIDTH 128
@@ -33,21 +35,21 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 void setup() {
   Serial.begin(9600);           // For outputting distance data
-  pinMode(echoPin,INPUT_PULLUP);  // Someone said this also helped with errant readings...
-  pinMode(triggerPin, OUTPUT);  // Make the triggerPin an OUTPUT
-  pinMode(echoPin2,INPUT_PULLUP);  // Someone said this also helped with errant readings...
-  pinMode(triggerPin2, OUTPUT);  // Make the triggerPin an OUTPUT
-  pinMode(echoPin3,INPUT_PULLUP);  // Someone said this also helped with errant readings...
-  pinMode(triggerPin3, OUTPUT);  // Make the triggerPin an OUTPUT
-  pinMode(echoPin4,INPUT_PULLUP);  // Someone said this also helped with errant readings...
-  pinMode(triggerPin4, OUTPUT);  // Make the triggerPin an OUTPUT
-  pinMode(echoPin5,INPUT_PULLUP);  // Someone said this also helped with errant readings...
-  pinMode(triggerPin5, OUTPUT);  // Make the triggerPin an OUTPUT
-  digitalWrite(triggerPin, LOW);
-  digitalWrite(triggerPin2, LOW);
-  digitalWrite(triggerPin3, LOW);
-  digitalWrite(triggerPin4, LOW);
-  digitalWrite(triggerPin5, LOW);
+  pinMode(frontLeftEcho,INPUT_PULLUP);  // Someone said this also helped with errant readings...
+  pinMode(frontLeftTrigger, OUTPUT);  // Make the triggerPin an OUTPUT
+  pinMode(backLeftEcho,INPUT_PULLUP);  // Someone said this also helped with errant readings...
+  pinMode(backLeftTrigger, OUTPUT);  // Make the triggerPin an OUTPUT
+  pinMode(frontRightEcho,INPUT_PULLUP);  // Someone said this also helped with errant readings...
+  pinMode(frontRightTrigger, OUTPUT);  // Make the triggerPin an OUTPUT
+  pinMode(backRightEcho,INPUT_PULLUP);  // Someone said this also helped with errant readings...
+  pinMode(backRightTrigger, OUTPUT);  // Make the triggerPin an OUTPUT
+  pinMode(frontEcho,INPUT_PULLUP);  // Someone said this also helped with errant readings...
+  pinMode(frontTrigger, OUTPUT);  // Make the triggerPin an OUTPUT
+  digitalWrite(frontLeftTrigger, LOW);
+  digitalWrite(backLeftTrigger, LOW);
+  digitalWrite(frontRightTrigger, LOW);
+  digitalWrite(backRightTrigger, LOW);
+  digitalWrite(frontTrigger, LOW);
   FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS); // Sets up the LED strip
   FastLED.setBrightness(10 );
   display.display();
@@ -65,36 +67,69 @@ void setup() {
 
 void loop()
 {
-  int dist1 = 0;
-  int dist2 = 0;
-  int dist3 = 0;
-  dist1 = getDistance(triggerPin, echoPin);
-  dist2 = getDistance(triggerPin2, echoPin2);
-  dist3 = getDistance(triggerPin3, echoPin3);
-  printToSerial(1, dist1);
-  printToSerial(2, dist2);
-  printToSerial(3, dist3);
-  printToDisplay(1, dist1);
-  printToDisplay(2, dist2);
-  printToDisplay(3, dist3);
+  int frontLeftDist = 0;
+  int backLeftDist = 0;
+  int frontRightDist = 0;
+  int backRightDist = 0;
+  int frontDist = 0;
+  frontLeftDist = getDistance(frontLeftTrigger, frontLeftEcho);
+  backLeftDist = getDistance(backLeftTrigger, backLeftEcho);
+  frontRightDist = getDistance(frontRightTrigger, frontRightEcho);
+  backRightDist = getDistance(backRightTrigger, backRightEcho);
+  frontDist = getDistance(frontTrigger, frontEcho);
+  Serial.print(frontLeftDist);
+  Serial.print(backLeftDist);
+  Serial.print(frontRightDist);
+  Serial.print(backLeftDist);
+  Serial.print(frontRightDist);
+  printToDisplay("Back left: ", backRightDist);
+  printToDisplay("Front: ", frontDist);
   display.display();
   display.clearDisplay();
   display.setCursor(0,0);
   copycat();
-  
-  if (dist1 < 25) 
+
+  if (frontLeftDist < 25 || frontRightDist < 25 || backLeftDist < 25 || backRightDist < 25 || frontDist < 25)
   {
-    Serial.print("Starting vibration\n");
-    startVibrate();
     startLEDs();
   }
-  
+
   else
   {
-    Serial.print("Stopping vibration\n");
-    stopVibrate();
     stopLEDs();
-    
+  }
+  
+  if (frontLeftDist < 25) 
+  {
+    Serial.print("Starting left handlebar vibration\n");
+    startVibrate(leftHandlebar);
+  }
+
+  else
+  {
+    stopVibrate(leftHandlebar);
+  }
+
+  if (frontRightDist < 25)
+  {
+    Serial.print("Starting right handlebar vibration\n");
+    startVibrate(rightHandlebar);
+  }
+
+  else
+  {
+    stopVibrate(rightHandlebar);
+  }
+
+  if (backLeftDist < 25 || backRightDist < 25)
+  {
+    Serial.print("Starting seat vibration\n");
+    startVibrate(seat);
+  }
+
+  else
+  {
+    stopVibrate(seat);
   }
 }
 
@@ -195,13 +230,13 @@ void copycat()
   delay(20);
 }
 
-void startVibrate()
+void startVibrate(int vibrationPin)
 {
-  digitalWrite(transPin1, HIGH);
+  digitalWrite(vibrationPin, HIGH);
 }
 
-void stopVibrate()
+void stopVibrate(int vibrationPin)
 {
-  digitalWrite(transPin1, LOW);
+  digitalWrite(vibrationPin, LOW);
 }
 
