@@ -77,9 +77,11 @@ void loop()
   frontRightDist = getDistance(frontRightTrigger, frontRightEcho);
   backRightDist = getDistance(backRightTrigger, backRightEcho);
   frontDist = getDistance(frontTrigger, frontEcho);
-  printToSerial("Front right: ", frontLeftDist);
-  printToSerial("Back right: ", backLeftDist);
-  printToSerial("Front left: ", frontRightDist);
+  Serial.print(frontLeftDist);
+  Serial.print(backLeftDist);
+  Serial.print(frontRightDist);
+  Serial.print(backLeftDist);
+  Serial.print(frontRightDist);
   printToDisplay("Back left: ", backRightDist);
   printToDisplay("Front: ", frontDist);
   display.display();
@@ -228,12 +230,12 @@ void copycat()
   delay(20);
 }
 
-void startVibrate(vibrationPin)
+void startVibrate(int vibrationPin)
 {
   digitalWrite(vibrationPin, HIGH);
 }
 
-void stopVibrate(vibrationPin)
+void stopVibrate(int vibrationPin)
 {
   digitalWrite(vibrationPin, LOW);
 }
