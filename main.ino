@@ -89,11 +89,11 @@ void loop()
   // display.setCursor(0,0);
   copycat();
 
-  checkLEDs();
+  checkLEDs(frontLeftDist, frontRightDist, backLeftDist, backRightDist, frontDist);
   
-  checkFront();
+  checkFront(frontLeftDist, frontRightDist);
 
-  checkBack();
+  checkBack(backLeftDist, backRightDist);
 
 // void printToSerial(int index, int distance)
 // {
@@ -108,7 +108,7 @@ void loop()
 //   sprintf(format, "Distance %i: %i cm", index, distance);
 //   display.println(format);
 // }
-
+}
 int getDistance(int trigger, int echo) 
 {
 
@@ -202,7 +202,7 @@ void stopVibrate(int vibrationPin)
   digitalWrite(vibrationPin, LOW);
 }
 
-void checkLEDs()
+void checkLEDs(int frontLeftDist, int frontRightDist, int backLeftDist, int backRightDist, int frontDist)
 {
   if (frontLeftDist < 25 || frontRightDist < 25 || backLeftDist < 25 || backRightDist < 25 || frontDist < 25)
   {
@@ -215,7 +215,7 @@ void checkLEDs()
   }
 }
 
-void checkFront()
+void checkFront(int frontLeftDist, int frontRightDist)
 {
   if (frontLeftDist < 25 && frontRightDist < 25) 
   {
@@ -226,12 +226,14 @@ void checkFront()
 
   else if (frontLeftDist < 25)
   {
+    Serial.print("Starting left handlebar vibration\n");
     stopVibrate(rightHandlebar);
     startVibrate(leftHandlebar);
   }
 
   else if (frontRightDist < 25)
   {
+    Serial.print("Starting right handlebar vibration\n");
     stopVibrate(leftHandlebar);
     startVibrate(rightHandlebar);
   }
@@ -243,7 +245,7 @@ void checkFront()
   }
 }
 
-void checkBack()
+void checkBack(int backLeftDist, int backRightDist)
 {
   if (backLeftDist < 25 || backRightDist < 25)
   {
