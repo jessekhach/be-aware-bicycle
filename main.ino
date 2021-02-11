@@ -16,6 +16,9 @@ const int echoPin4 = 9;
 const int triggerPin5 = 10;
 const int echoPin5 = 11;
 
+// Defining transistor pins to toggle vibrations
+const int transPin1 = 13;
+
 // OLED Declaration screen size in pixels
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
@@ -77,7 +80,22 @@ void loop()
   display.display();
   display.clearDisplay();
   display.setCursor(0,0);
-  makeLEDs();
+  copycat();
+  
+  if (dist1 < 25) 
+  {
+    Serial.print("Starting vibration\n");
+    startVibrate();
+    startLEDs();
+  }
+  
+  else
+  {
+    Serial.print("Stopping vibration\n");
+    stopVibrate();
+    stopLEDs();
+    
+  }
 }
 
 void printToSerial(int index, int distance)
@@ -136,7 +154,7 @@ int getDistance(int trigger, int echo)
   return (distance);
 }
 
-void makeLEDs()
+void startLEDs()
 {
   for (int i = 0; i <= 20; i++) {
     leds[i] = CRGB ( 255, 255, 255);
@@ -151,3 +169,39 @@ void makeLEDs()
   }
   delay(20);
 }
+
+void stopLEDs()
+{
+  for (int i = 0; i <= 20; i++) {
+  leds[i] = CRGB ( 0, 0, 0);
+  FastLED.show();
+
+  }
+}
+
+void copycat()
+{
+  for (int i = 0; i <= 20; i++) {
+    leds[i] = CRGB ( 255, 0, 0);
+    // FastLED.show();
+
+  }
+  delay(20);
+  for (int i = 20; i >= 0; i--) {
+    leds[i] = CRGB ( 0, 0, 0);
+    // FastLED.show();
+
+  }
+  delay(20);
+}
+
+void startVibrate()
+{
+  digitalWrite(transPin1, HIGH);
+}
+
+void stopVibrate()
+{
+  digitalWrite(transPin1, LOW);
+}
+
