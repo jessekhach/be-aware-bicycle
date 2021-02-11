@@ -18,8 +18,8 @@ const int frontEcho = 11;
 
 // Defining transistor pins to toggle vibrations
 const int leftHandlebar = 13;
-const int rightHandlebar = 14;
-const int seat = 15;
+const int rightHandlebar = 22;
+const int seat = 23;
 
 // // OLED Declaration screen size in pixels
 // #define SCREEN_WIDTH 128
@@ -204,7 +204,7 @@ void stopVibrate(int vibrationPin)
 
 void checkLEDs(int frontLeftDist, int frontRightDist, int backLeftDist, int backRightDist, int frontDist)
 {
-  if (frontLeftDist < 25 || frontRightDist < 25 || backLeftDist < 25 || backRightDist < 25 || frontDist < 25)
+  if (frontLeftDist < 60 || frontRightDist < 60 || backLeftDist < 60 || backRightDist < 60 || frontDist < 60)
   {
     startLEDs();
   }
@@ -217,21 +217,21 @@ void checkLEDs(int frontLeftDist, int frontRightDist, int backLeftDist, int back
 
 void checkFront(int frontLeftDist, int frontRightDist)
 {
-  if (frontLeftDist < 25 && frontRightDist < 25) 
+  if (frontLeftDist < 30 && frontRightDist < 30) 
   {
     Serial.print("Starting full handlebar vibration\n");
     startVibrate(leftHandlebar);
     startVibrate(rightHandlebar);
   }
 
-  else if (frontLeftDist < 25)
+  else if (frontLeftDist < 30)
   {
     Serial.print("Starting left handlebar vibration\n");
     stopVibrate(rightHandlebar);
     startVibrate(leftHandlebar);
   }
 
-  else if (frontRightDist < 25)
+  else if (frontRightDist < 30)
   {
     Serial.print("Starting right handlebar vibration\n");
     stopVibrate(leftHandlebar);
@@ -247,7 +247,7 @@ void checkFront(int frontLeftDist, int frontRightDist)
 
 void checkBack(int backLeftDist, int backRightDist)
 {
-  if (backLeftDist < 25 || backRightDist < 25)
+  if (backLeftDist < 30 || backRightDist < 30)
   {
     Serial.print("Starting seat vibration\n");
     startVibrate(seat);
