@@ -58,6 +58,7 @@ void setup() {
   //   for(;;);
   // }
   delay(2000);
+
   // display.clearDisplay();
   // display.setTextSize(2);
   // display.setTextColor(WHITE);
@@ -91,7 +92,7 @@ void loop()
 
   checkLEDs(frontLeftDist, frontRightDist, backLeftDist, backRightDist, frontDist);
   
-  checkFront(frontLeftDist, frontRightDist);
+  checkFront(frontLeftDist, frontRightDist, frontDist);
 
   checkBack(backLeftDist, backRightDist);
 
@@ -215,9 +216,9 @@ void checkLEDs(int frontLeftDist, int frontRightDist, int backLeftDist, int back
   }
 }
 
-void checkFront(int frontLeftDist, int frontRightDist)
+void checkFront(int frontLeftDist, int frontRightDist, int frontDist)
 {
-  if (frontLeftDist < 30 && frontRightDist < 30) 
+  if ((frontLeftDist < 30 && frontRightDist < 30) || frontDist < 30) 
   {
     Serial.print("Starting full handlebar vibration\n");
     startVibrate(leftHandlebar);
