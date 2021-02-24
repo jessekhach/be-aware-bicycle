@@ -21,95 +21,68 @@ const int leftHandlebar = 13;
 const int rightHandlebar = 22;
 const int seat = 23;
 
-// // OLED Declaration screen size in pixels
-// #define SCREEN_WIDTH 128
-// #define SCREEN_HEIGHT 64
-
 // Defining the LED strip parameters
 #define LED_PIN     12
 #define NUM_LEDS    60
 CRGB leds[NUM_LEDS];
 
-// // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-// Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
-
 void setup() {
-  Serial.begin(9600);           // For outputting distance data
-  pinMode(frontLeftEcho,INPUT_PULLUP);  // Someone said this also helped with errant readings...
-  pinMode(frontLeftTrigger, OUTPUT);  // Make the triggerPin an OUTPUT
-  pinMode(backLeftEcho,INPUT_PULLUP);  // Someone said this also helped with errant readings...
-  pinMode(backLeftTrigger, OUTPUT);  // Make the triggerPin an OUTPUT
-  pinMode(frontRightEcho,INPUT_PULLUP);  // Someone said this also helped with errant readings...
-  pinMode(frontRightTrigger, OUTPUT);  // Make the triggerPin an OUTPUT
-  pinMode(backRightEcho,INPUT_PULLUP);  // Someone said this also helped with errant readings...
-  pinMode(backRightTrigger, OUTPUT);  // Make the triggerPin an OUTPUT
-  pinMode(frontEcho,INPUT_PULLUP);  // Someone said this also helped with errant readings...
-  pinMode(frontTrigger, OUTPUT);  // Make the triggerPin an OUTPUT
+  Serial.begin(9600); // For outputting distance data
+  
+  // Defining all pins as inputs or outputs
+  pinMode(frontLeftEcho,INPUT_PULLUP); 
+  pinMode(frontLeftTrigger, OUTPUT); 
+  pinMode(backLeftEcho,INPUT_PULLUP);  
+  pinMode(backLeftTrigger, OUTPUT);  
+  pinMode(frontRightEcho,INPUT_PULLUP);  
+  pinMode(frontRightTrigger, OUTPUT);  
+  pinMode(backRightEcho,INPUT_PULLUP);  
+  pinMode(backRightTrigger, OUTPUT);  
+  pinMode(frontEcho,INPUT_PULLUP);  
+  pinMode(frontTrigger, OUTPUT);  
+  
+  // Defining the digital trigger pins
   digitalWrite(frontLeftTrigger, LOW);
   digitalWrite(backLeftTrigger, LOW);
   digitalWrite(frontRightTrigger, LOW);
   digitalWrite(backRightTrigger, LOW);
   digitalWrite(frontTrigger, LOW);
-  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS); // Sets up the LED strip
+  
+  // Setting up the LED strip
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
   FastLED.setBrightness(10 );
-  // display.display();
-  // if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
-  //   Serial.println(F("SSD1306 allocation failed"));
-  //   for(;;);
-  // }
   delay(2000);
-
-  // display.clearDisplay();
-  // display.setTextSize(2);
-  // display.setTextColor(WHITE);
-  // display.setCursor(0, 0);
-  // display.display();
 }
 
 void loop()
 {
+  // Defining a default distance in the scope
   int frontLeftDist = 0;
   int backLeftDist = 0;
   int frontRightDist = 0;
   int backRightDist = 0;
   int frontDist = 0;
+  
+  // Achieving the distances from each sensor in cm
   frontLeftDist = getDistance(frontLeftTrigger, frontLeftEcho);
   backLeftDist = getDistance(backLeftTrigger, backLeftEcho);
   frontRightDist = getDistance(frontRightTrigger, frontRightEcho);
   backRightDist = getDistance(backRightTrigger, backRightEcho);
   frontDist = getDistance(frontTrigger, frontEcho);
-  // Serial.print(frontLeftDist);
-  // Serial.print(backLeftDist);
-  // Serial.print(frontRightDist);
-  // Serial.print(backLeftDist);
-  // Serial.print(frontRightDist);
-  // printToDisplay("Back left: ", backRightDist);
-  // printToDisplay("Front: ", frontDist);
-  // display.display();
-  // display.clearDisplay();
-  // display.setCursor(0,0);
+  
+  // Debugging function, unsure how to fix yet
   copycat();
 
+  // Determine whether LEDs should be enabled
   checkLEDs(frontLeftDist, frontRightDist, backLeftDist, backRightDist, frontDist);
   
+  // Determine whether front vibration motors should be activated
   checkFront(frontLeftDist, frontRightDist, frontDist);
 
+  // Determine whether back vibration motor should be enabled
   checkBack(backLeftDist, backRightDist);
-
-// void printToSerial(int index, int distance)
-// {
-//   char format[16];
-//   sprintf(format, "Distance %i: %i \n", index, distance);
-//   Serial.print(format);
-// }
-
-// void printToDisplay(int index, int distance)
-// {
-//   char format[16];
-//   sprintf(format, "Distance %i: %i cm", index, distance);
-//   display.println(format);
-// }
 }
+
 int getDistance(int trigger, int echo) 
 {
 
@@ -154,12 +127,15 @@ int getDistance(int trigger, int echo)
 
 void startLEDs()
 {
+  // Set all LEDs to be white
   for (int i = 0; i <= 20; i++) {
     leds[i] = CRGB ( 255, 255, 255);
     FastLED.show();
 
   }
   delay(20);
+  
+  // Set all LEDs to be red
   for (int i = 20; i >= 0; i--) {
     leds[i] = CRGB ( 255, 0, 0);
     FastLED.show();
@@ -170,6 +146,7 @@ void startLEDs()
 
 void stopLEDs()
 {
+  // Set all LEDs to be black or off
   for (int i = 0; i <= 20; i++) {
   leds[i] = CRGB ( 0, 0, 0);
   FastLED.show();
@@ -179,16 +156,13 @@ void stopLEDs()
 
 void copycat()
 {
+  // Debugging function (doesn't actually output anything)
   for (int i = 0; i <= 20; i++) {
     leds[i] = CRGB ( 255, 0, 0);
-    // FastLED.show();
-
   }
   delay(20);
   for (int i = 20; i >= 0; i--) {
     leds[i] = CRGB ( 0, 0, 0);
-    // FastLED.show();
-
   }
   delay(20);
 }
@@ -205,6 +179,7 @@ void stopVibrate(int vibrationPin)
 
 void checkLEDs(int frontLeftDist, int frontRightDist, int backLeftDist, int backRightDist, int frontDist)
 {
+  // Determine whether the LEDs should turn off if the distance on any sensor is less than 60cm
   if (frontLeftDist < 60 || frontRightDist < 60 || backLeftDist < 60 || backRightDist < 60 || frontDist < 60)
   {
     startLEDs();
@@ -218,6 +193,7 @@ void checkLEDs(int frontLeftDist, int frontRightDist, int backLeftDist, int back
 
 void checkFront(int frontLeftDist, int frontRightDist, int frontDist)
 {
+  // Determine whether either front vibration motor should be on
   if ((frontLeftDist < 30 && frontRightDist < 30) || frontDist < 30) 
   {
     Serial.print("Starting full handlebar vibration\n");
@@ -248,6 +224,7 @@ void checkFront(int frontLeftDist, int frontRightDist, int frontDist)
 
 void checkBack(int backLeftDist, int backRightDist)
 {
+  // Determine whether the seat vibration motor should be on
   if (backLeftDist < 30 || backRightDist < 30)
   {
     Serial.print("Starting seat vibration\n");
