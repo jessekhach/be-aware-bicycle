@@ -25,6 +25,8 @@ const int seat = 12;
 #define LED_PIN     13
 #define NUM_LEDS    60
 CRGB leds[NUM_LEDS];
+
+// Initializing a counter
 static int count = 0;
 
 void setup() {
