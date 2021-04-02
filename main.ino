@@ -74,29 +74,8 @@ void loop()
   Serial.print(backLeftDist, "\n");
   Serial.print(frontRightDist, "\n");
   
-  // if (frontLeftDist < dist || frontRightDist < dist || backLeftDist < dist || backRightDist < dist || frontDist < dist)
-  // {
-  //   count++;
-  // }
-  
-  // else
-  // {
-  //   count = 0;
-  // }
-  
-  // if (count > 15)
-  // {
   checkFront(frontLeftDist, frontRightDist, frontDist);
   checkBack(backLeftDist, backRightDist);
-  // }
-  
-  // else
-  // {
-  //   stopVibrate(leftHandlebar);
-  //   stopVibrate(rightHandlebar);
-  //   stopVibrate(seat);
-  //   stopLEDs();
-  // }
 
 }
 int getDistance(int trigger, int echo, int timeout) 
@@ -142,22 +121,6 @@ int getDistance(int trigger, int echo, int timeout)
   return (distance);
 }
 
-// void startLEDs()
-// {
-//   for (int i = 0; i <= 20; i++) {
-//     leds[i] = CRGB ( 255, 255, 255);
-//     FastLED.show();
-
-//   }
-//   delay(20);
-//   for (int i = 20; i >= 0; i--) {
-//     leds[i] = CRGB ( 255, 0, 0);
-//     FastLED.show();
-
-//   }
-//   delay(20);
-// }
-
 void stopLEDs()
 {
   for (int i = 0; i <= 5; i++) {
@@ -166,22 +129,6 @@ void stopLEDs()
 
   }
 }
-
-// void copycat()
-// {
-//   for (int i = 0; i <= 20; i++) {
-//     leds[i] = CRGB ( 255, 0, 0);
-//     // FastLED.show();
-
-//   }
-//   delay(20);
-//   for (int i = 20; i >= 0; i--) {
-//     leds[i] = CRGB ( 0, 0, 0);
-//     // FastLED.show();
-
-//   }
-//   delay(20);
-// }
 
 void startVibrate(int vibrationPin)
 {
@@ -192,21 +139,6 @@ void stopVibrate(int vibrationPin)
 {
   digitalWrite(vibrationPin, LOW);
 }
-
-// void checkLEDs(int frontLeftDist, int frontRightDist, int backLeftDist, int backRightDist, int frontDist)
-// {
-//   int count;
-//   if (frontLeftDist < 120 || frontRightDist < 120 || backLeftDist < 120 || backRightDist < 120 || frontDist < 120)
-//   {
-//     startLEDs();
-//   }
-
-//   else
-//   {
-//     count = 0;
-//     stopLEDs();
-//   }
-// }
 
 void checkFront(int frontLeftDist, int frontRightDist, int frontDist)
 {
